@@ -1,0 +1,88 @@
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+
+
+module.exports = {
+    entry: './src/index.js',
+
+    output: {
+        path: path.resolve('dist'),
+        filename: 'bundle.js'
+    },
+
+    module: {
+        rules: [
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: 'html-loader',
+                        options: { minimize: true },
+                    },
+                ],
+            },
+            {
+                test: /\.js$/,
+                use: 'babel-loader'
+            },
+
+
+            {
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'sass-loader']
+                })
+            },
+            {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract(
+                    {
+                        fallback: 'style-loader',
+                        use: ['css-loader', 'sass-loader']
+                    })
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'img/',
+                            name: '[name].[ext]',
+                        },
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                    },
+                ]
+            },
+            {
+                test: /\.(ttf|eot|otf|woff|woff2|svg|ico)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'fonts/',
+                            name: '[name].[ext]',
+                        },
+                    },
+                ],
+            },
+        ]
+    },
+
+    plugins: [
+        new ExtractTextPlugin('css/styles.css'),
+        new HtmlWebpackPlugin({
+            inject: false,
+            hash: true,
+            template: './src/index.html',
+            filename: 'index.html'
+        }),
+
+    ]
+};

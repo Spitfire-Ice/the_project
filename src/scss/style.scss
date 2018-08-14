@@ -1,5 +1,11 @@
+@import './fonts.css';
+
 $bg-color: pink;
 
 body {
   background: $bg-color;
+}
+h1 {
+  font-family: "MyriadPro";
+  font-size: 40px;
 }

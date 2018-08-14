@@ -1,31 +1,85 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackMd5Hash = require('webpack-md5-hash');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
-    entry: './src/index.js',
-
+    entry: { main: './src/index.js' },
     output: {
-        path: path.resolve('dist'),
-        filename: 'bundle.js'
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].[chunkhash].js'
     },
-
     module: {
-        rules: [{
-            test: /\.js$/,
-            use: 'babel-loader'
-        },
+        rules: [
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: 'html-loader',
+                        options: {
+                            minimize: true,
+                            removeComments: true,
+                            collapseWhitespace: true
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
+            },
 
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'sass-loader']
-                })
-            }
+                use:  [  'style-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.(ttf|eot|otf|woff|woff2|svg|ico)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'fonts/',
+                            name: '[name].[ext]',
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.(png|jpeg|jpg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'img/',
+                            name: '[name].[ext]',
+                        },
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                    },
+                ],
+            },
         ]
     },
-
     plugins: [
-        new ExtractTextPlugin('css/styles.css')
+        new CleanWebpackPlugin('dist', {} ),
+        new MiniCssExtractPlugin({
+            filename: 'css/style.[contenthash].css',
+        }),
+        new HtmlWebpackPlugin({
+            // inject: false,
+            hash: true,
+            template: './src/index.html',
+            filename: 'index.html'
+        }),
+        new WebpackMd5Hash()
     ]
 };
