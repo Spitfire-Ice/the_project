@@ -26,10 +26,10 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                exclude: /node_modules/,
+                exclude: /node_modules\/(?!(dom7|swiper)\/).*/,
                 use: {
-                    loader: "babel-loader"
-                }
+                    loader: 'babel-loader',
+                },
             },
 
             {
@@ -74,6 +74,11 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: 'css/style.[contenthash].css',
         }),
+        // new webpack.ProvidePlugin({
+        //     $: 'jquery',
+        //     jQuery: 'jquery',
+        //     'window.jQuery': 'jquery',
+        // }),
         new HtmlWebpackPlugin({
             // inject: false,
             hash: true,

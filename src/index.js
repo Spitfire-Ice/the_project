@@ -1,2 +1,3 @@
 import './scss/style.scss';
-console.log("Hello");
+import './js/flickity.pkgd';
+import './js/main';
